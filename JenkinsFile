@@ -4,20 +4,25 @@ pipeline {
 	stages {
 		stage ('compile stage') {
 			steps {
-				sh 'mvn clean compile'
-				
+				withMaven(maven : 'maven_3.6.0') {
+					bat 'mvn clean compile'
+				}
 			}
 		}
 		
 		stage ('Unit Testing stage') {
 			steps {
-				sh 'mvn test'
+				withMaven(maven : 'maven_3.6.0') {
+					bat 'mvn test'
+				}
 			}
 		}
 		
 		stage ('Static Code Analysis stage') {
 			steps {
-				sh 'mvn sonar:sonar'
+				withMaven(maven : 'maven_3.6.0') {	
+					bat 'mvn sonar:sonar'
+				}
 			}
 		}
 		
@@ -30,7 +35,9 @@ pipeline {
 		
 		stage ('QA Deployment stage') {
 			steps {
-				sh 'mvn deploy'
+				withMaven(maven : 'maven_3.6.0') {
+					bat 'mvn deploy'
+				}
 			}
 			
 		}
