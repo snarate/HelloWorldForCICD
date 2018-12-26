@@ -1,47 +1,20 @@
 pipeline {
-	agent any
+    agent any
+    tools {
+        maven 'Maven 3.6.0'
+        jdk 'jdk8'
+    }
+    stages {
 	
-	stages {
-		stage ('compile stage') {
-			steps {
-				withMaven(maven : 'maven_3.6.0') {
-					bat 'mvn clean compile'
-				}
-			}
-		}
-		
-		stage ('Unit Testing stage') {
-			steps {
-				withMaven(maven : 'maven_3.6.0') {
-					bat 'mvn test'
-				}
-			}
-		}
-		
-		stage ('Static Code Analysis stage') {
-			steps {
-				withMaven(maven : 'maven_3.6.0') {	
-					bat 'mvn sonar:sonar'
-				}
-			}
-		}
-		
-		stage ('Manual Code Review stage') {
-		
-			steps {
-				input('Does the code review successful?')
-			}
-		}
-		
-		stage ('QA Deployment stage') {
-			steps {
-				withMaven(maven : 'maven_3.6.0') {
-					bat 'mvn deploy'
-				}
-			}
-			
-		}
-		
-		
-	}
+        stage ('Build') {
+            steps {
+                bat 'mvn -Dmaven.test.failure.ignore=true install' 
+            }
+            post {
+                success {
+                    junit 'target/surefire-reports/**/*.xml' 
+                }
+            }
+        }
+    }
 }
